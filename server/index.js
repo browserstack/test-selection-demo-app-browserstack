@@ -240,9 +240,9 @@ app.post('/api/products', csrfProtection, (req, res) => {
   const newProduct = {
     id: Date.now(),
     name,
-    price: parseFloat(price),
     category,
-    stock: parseInt(stock) || 0,
+    price: 0,           // always zero
+    stock: 0,           // always zero
     description: description || ''
   };
   
