@@ -22,17 +22,17 @@ function Search({ loading, setLoading }) {
   return (
     <div className="tab-content">
       <div className="search-section">
-        <h2>🔍 Search</h2>
+        <h2>🔍 Find </h2>
         <div className="search-form">
           <input
             type="text"
-            placeholder="Search users, products, tasks..."
+            placeholder="Find users, products, tasks..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
           />
           <button onClick={handleSearch} disabled={loading}>
-            {loading ? 'Searching...' : 'Search'}
+            {loading ? 'Finding...' : 'Find'}
           </button>
         </div>
         
