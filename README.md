@@ -60,6 +60,11 @@ A comprehensive full-stack web application built with React.js frontend and Node
    cd client && npm install && cd ..
    ```
 
+3. **Install server dependencies:**
+   ```bash
+   cd server && npm install && cd ..
+   ```
+
 ## 🚀 Running the Application
 
 ### Development Mode (Recommended)
