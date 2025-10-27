@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const csurf = require('csurf');
 require('dotenv').config();
 
 const app = express();
@@ -29,7 +31,18 @@ let tasks = [
 
 // Middleware
 app.use(cors());
+app.use(cookieParser());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// CSRF protection middleware
+const csrfProtection = csurf({ cookie: true });
+app.use(csrfProtection);
+
+// Endpoint to provide CSRF token to clients
+app.get('/csrf-token', (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
+});
 
 // Request logging middleware
 app.use((req, res, next) => {
@@ -107,7 +120,7 @@ app.get('/api/users/:id', (req, res) => {
   res.json(user);
 });
 
-app.post('/api/users', (req, res) => {
+app.post('/api/users', csrfProtection, (req, res) => {
   const { name, email, role = 'user' } = req.body;
   
   if (!name || !email) {
@@ -136,7 +149,7 @@ app.post('/api/users', (req, res) => {
   });
 });
 
-app.put('/api/users/:id', (req, res) => {
+app.put('/api/users/:id', csrfProtection, (req, res) => {
   const userId = parseInt(req.params.id);
   const userIndex = users.findIndex(u => u.id === userId);
   
@@ -153,7 +166,7 @@ app.put('/api/users/:id', (req, res) => {
   });
 });
 
-app.delete('/api/users/:id', (req, res) => {
+app.delete('/api/users/:id', csrfProtection, (req, res) => {
   const userId = parseInt(req.params.id);
   const userIndex = users.findIndex(u => u.id === userId);
   
@@ -217,7 +230,7 @@ app.get('/api/products/:id', (req, res) => {
   res.json(product);
 });
 
-app.post('/api/products', (req, res) => {
+app.post('/api/products', csrfProtection, (req, res) => {
   const { name, price, category, stock, description } = req.body;
   
   if (!name || !price || !category) {
@@ -261,7 +274,7 @@ app.get('/api/orders', (req, res) => {
   });
 });
 
-app.post('/api/orders', (req, res) => {
+app.post('/api/orders', csrfProtection, (req, res) => {
   const { userId, productId, quantity = 1 } = req.body;
   
   if (!userId || !productId) {
@@ -331,7 +344,7 @@ app.get('/api/tasks', (req, res) => {
   });
 });
 
-app.post('/api/tasks', (req, res) => {
+app.post('/api/tasks', csrfProtection, (req, res) => {
   const { title, priority = 'medium', assignedTo } = req.body;
   
   if (!title) {
@@ -355,7 +368,7 @@ app.post('/api/tasks', (req, res) => {
   });
 });
 
-app.put('/api/tasks/:id', (req, res) => {
+app.put('/api/tasks/:id', csrfProtection, (req, res) => {
   const taskId = parseInt(req.params.id);
   const taskIndex = tasks.findIndex(t => t.id === taskId);
   
@@ -508,7 +521,7 @@ app.get('/api/test/large-data', (req, res) => {
   });
 });
 
-app.post('/api/test/echo', (req, res) => {
+app.post('/api/test/echo', csrfProtection, (req, res) => {
   res.json({
     message: 'Echo endpoint - returning your data',
     received: req.body,
@@ -575,7 +588,7 @@ app.get('/api/users/paginated', (req, res) => {
 });
 
 // ============ BULK OPERATIONS ============
-app.post('/api/users/bulk', (req, res) => {
+app.post('/api/users/bulk', csrfProtection, (req, res) => {
   const { users: newUsers } = req.body;
   
   if (!Array.isArray(newUsers)) {
