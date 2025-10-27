@@ -1,0 +1,31 @@
+{
+    "name": "test-selection-demo-app-browserstack",
+    "version": "1.0.0",
+    "description": "A comprehensive full-stack web application built with React.js frontend and Node.js/Express.js backend, designed for AI model testing and demonstration purposes.",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/browserstack/test-selection-demo-test-browserstack.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/browserstack/test-selection-demo-test-browserstack/issues"
+    },
+    "homepage": "https://github.com/browserstack/test-selection-demo-test-browserstack#readme",
+    "scripts": {
+        "start": "concurrently \"cd client && npm start\" \"cd server && npm start\"",
+        "dev": "concurrently \"cd client && npm start\" \"cd server && npm run dev\"",
+        "install:all": "npm install && cd client && npm install && cd ../server && npm install",
+        "clean": "rm -rf node_modules client/node_modules server/node_modules client/package-lock.json server/package-lock.json package-lock.json",
+        "reinstall": "npm run clean && npm run install:all",
+        "build": "cd client && npm run build",
+        "test:client": "cd client && npm test",
+        "start:server": "cd server && npm start",
+        "start:client": "cd client && npm start",
+        "dev:server": "cd server && npm run dev"
+    },
+    "devDependencies": {
+        "concurrently": "^9.2.1"
+    }
+}
