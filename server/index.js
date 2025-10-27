@@ -33,7 +33,7 @@ app.use(express.json());
 
 // Request logging middleware
 app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  console.log(new Date().toISOString(), '-', req.method, req.url);
   next();
 });
 
@@ -618,7 +618,7 @@ app.post('/api/users/bulk', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}`);
+  console.log('🚀 Server is running on port', PORT);
   console.log(`📱 Frontend should run on http://localhost:3000`);
-  console.log(`🔗 Backend API available at http://localhost:${PORT}/api`);
+  console.log('🔗 Backend API available at http://localhost:' + PORT + '/api');
 });
