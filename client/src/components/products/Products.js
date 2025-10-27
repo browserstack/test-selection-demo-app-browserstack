@@ -30,7 +30,7 @@ function Products({ products, loading, fetchProducts, fetchAnalytics }) {
   const handleAddProduct = async (e) => {
     e.preventDefault();
     if (!newProduct.name || !newProduct.price || !newProduct.category) {
-      toast.error('Please fill in all required fields: name, price, and category');
+      toast.error('Please fill in all required fields');
       return;
     }
     try {
