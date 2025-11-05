@@ -1,294 +1,221 @@
-# Test Selection Demo App Browserstack
-A comprehensive full-stack web application built with React.js frontend and Node.js/Express.js backend, designed for AI model testing and demonstration purposes.
+# Smart Test Selection & Orchestration AI Agent Demo for BrowserStack Automate
 
-## 🚀 Features
+## Table of Contents
+- [What is Smart Test Selection?](#-what-is-smart-test-selection)
 
-### Frontend Features
-- **Multi-Tab Interface**: Dashboard, Users, Products, Tasks, Orders, and Search
-- **Real-time Analytics**: Visual dashboard with key metrics
-- **CRUD Operations**: Full Create, Read, Update, Delete functionality
-- **Advanced Search**: Cross-entity search with filtering
-- **Responsive Design**: Mobile-friendly interface
-- **Interactive UI**: Dynamic forms, modals, and real-time updates
+- [Introduction](#-introduction)
 
-### Backend Features
-- **RESTful API**: Complete REST endpoints with proper HTTP methods
-- **Data Management**: Users, Products, Tasks, Orders with relationships
-- **Advanced Filtering**: Query parameters for sorting, pagination, filtering
-- **Bulk Operations**: Create multiple records simultaneously
-- **Error Handling**: Comprehensive error responses with proper status codes
-- **Test Endpoints**: Special endpoints for AI model testing scenarios
+- [Setup Instructions](#-setup-instructions)
+  - [Prerequisites](#-prerequisites)
+  - [Step 1: Clone and Run Demo Application](#-step-1-clone-and-run-demo-application)
+  - [Step 2: Clone and Build Test Repository](#-step-2-clone-and-build-test-repository)
+  - [Step 3: Run Your First Tests](#-step-3-run-tests)
 
-### AI Testing Features
-- **Slow Response Simulation**: Test timeout handling
-- **Error Code Generation**: Test error handling (400, 401, 403, 404, 500)
-- **Large Data Sets**: Generate large JSON responses for performance testing
-- **Echo Endpoint**: Return request data for debugging
-- **Random Data Generation**: Various data types for testing
-- **Pagination**: Test pagination scenarios
+- [Smart Test Selection Configuration](#-smart-test-selection-configuration)
+    
+- [Running the Demo](#-running-the-demo)
+  - [Learning Mode](#-learning-mode)
+  - [Prediction Mode](#-prediction-mode)
+  
+- [Additional Resources](#-additional-resources)
 
-## 📁 Enhanced Project Structure
+---
+
+## What is Smart Test Selection?
+
+**BrowserStack’s Smart Test Selection** is an AI-powered agent that determines the impact of code changes on your test suite and intelligently selects the relevant tests to run — helping you ship faster with fewer builds, reduced infrastructure costs, and quicker feedback loops.
+
+## Introduction
+
+This repository demonstrates Smart Test Selection in action using the TestNG-based Java framework. It integrates with the BrowserStack Java SDK and demonstrates how AI-powered test selection can optimize your test execution by running only relevant tests based on code changes.
+
+**The demo setup uses two repositories:**
+- Application Code Repo – [test-selection-demo-app-browserstack](https://github.com/browserstack/test-selection-demo-app-browserstack)
+- Test Code Repo – [test-selection-demo-test-browserstack](https://github.com/browserstack/test-selection-demo-test-browserstack)
+
+You will run builds to observe:  
+- **Learning Mode** – when the agent learns from the code diff metadata and test execution data  
+- **Prediction Mode** – when the agent starts predicting and running only relevant tests
+
+**Test Execution Modes**:
+- `relevantFirst`: Runs relevant tests first, then remaining tests
+- `relevantOnly`: Runs only relevant tests
+
+---
+
+## Setup Instructions
+
+### Prerequisites
+
+-  **Java 11 or higher**: [Download Java](https://www.oracle.com/java/technologies/downloads/)  
+   After installation, set your `JAVA_HOME` environment variable:  
+    - **Mac / Linux**
+        ```bash
+        export JAVA_HOME=$(/usr/libexec/java_home)
+        ```
+    - **Windows (PowerShell)**
+        ```powershell
+        setx JAVA_HOME "C:\Program Files\Java\jdk-11"
+        ```
+
+-  **Maven 3.6 or higher**: [Download Maven](https://maven.apache.org/download.cgi)  
+     After installation, add Maven to your system `PATH`:
+     - **Mac / Linux**
+        ```bash
+        export PATH=$PATH:/opt/apache-maven-3.6.3/bin
+        ```
+    - **Windows (PowerShell)**
+        ```powershell
+        setx PATH "%PATH%;C:\apache-maven-3.6.3\bin"
+        ```
+
+- **Node.js 16 or higher**: [Download Node.js](https://nodejs.org/en/download)  
+
+-  **Git**: [Download Git](https://git-scm.com/downloads)
+
+- **BrowserStack Account**:  
+    - Sign up at [BrowserStack](https://www.browserstack.com/) for cloud testing
+    - Ensure AI is enabled in your BrowserStack Account. For more details, see [activate BrowserStack AI preferences](https://www.browserstack.com/docs/iaam/settings-and-permissions/activate-browserstack-ai)
+
+---
+
+### Step 1: Clone and Run Demo Application
+```
+# Clone the demo application repository
+git clone https://github.com/browserstack/test-selection-demo-app-browserstack.git
+cd test-selection-demo-app-browserstack
+
+# Install all dependencies (root, client, and server)
+npm run install:all
+
+# Start the application (runs on port 3000)
+npm start
+```
+
+The application will start:
+-  **Frontend**: http://localhost:3000
+-  **Backend API**: http://localhost:5001
+
+Keep this running in a separate terminal.
+
+### Step 2: Clone and Build Test Repository
 
 ```
-├── client/                     # React frontend
-│   ├── public/
-│   ├── src/
-│   │   ├── App.js             # Main React component with tabs
-│   │   ├── App.css            # Enhanced styling
-│   │   └── index.js           # Entry point
-│   └── package.json           # Client dependencies
-├── server/                     # Express backend
-│   └── index.js               # Enhanced server with multiple endpoints
-├── .github/
-│   └── copilot-instructions.md # AI assistant instructions
-├── .vscode/
-│   └── tasks.json             # VS Code tasks
-├── package.json               # Root package.json with scripts
-├── .gitignore                 # Git ignore file
-└── README.md                  # This file
+# Clone this test repository
+git clone https://github.com/browserstack/test-selection-demo-test-browserstack.git
+cd test-selection-demo-test-browserstack
+
+# Checkout the TestNG demo branch
+git checkout testng-automate
+
+# Build the project (downloads dependencies)
+mvn clean install
+```  
+Update `username` and `accesskey` in the browserstack.yml file with your BrowserStack access credentials retrieved from [here](https://www.browserstack.com/accounts/profile/details)
+
+### Step 3: Run Your First Tests
+
+```
+# Run all tests locally (to verify setup)
+mvn test
+```
+---
+
+## Smart Test Selection Configuration
+
+BrowserStack offers **two methods** to enable Smart Test Selection in your test automation workflows:
+
+1. **Repository Cloning:** (used in this demo)  
+   BrowserStack clones your application source code locally (from a git repo or local path) to analyze code changes and select relevant tests.  
+   [Learn more](https://www.browserstack.com/docs/automate/selenium/smart-test-selection?fw-lang=java#Repo_cloning)
+
+2. **GitHub App Integration:**  
+   BrowserStack's GitHub App connects directly to your GitHub repository for seamless code analysis and test selection—no manual cloning required.  
+   [Learn more](https://www.browserstack.com/docs/automate/selenium/smart-test-selection?fw-lang=java#GitHub_app)
+
+
+> **Note:**  
+> For this demo, since **repository cloning** is used, the demo application code must be cloned locally for test execution
+
+### browserstack.yml Configuration: 
+
+Update your `browserstack.yml` as given below to enable Smart Test Selection using repo cloning:
+
+```yaml
+browserstackLocal: true # for local testing
+testOrchestrationOptions:
+  runSmartSelection:
+    enabled: true
+    source:
+      - '<path_to_demo_code_locally_cloned>'
+    mode: 'relevantOnly'
 ```
 
-## 🛠️ Installation & Setup
+- Replace `<path_to_demo_code_locally_cloned>` with the actual local path of the cloned demo application repository.
 
-1. **Install root dependencies:**
-   ```bash
-   npm install
+---
+
+## Running the demo  
+
+**Use the Demo Application to Simulate Application Code Changes:**  
+To simulate code changes, you can use any existing pull request (PR) or create a new PR in [test-selection-demo-app-browserstack](https://github.com/browserstack/test-selection-demo-app-browserstack) with updates or small bugs  
+In the demo app repository, check out a feature branch with known changes (for example: [search_section_bug](https://github.com/browserstack/test-selection-demo-app-browserstack/tree/search_section_bug), [add_product_error_msg](https://github.com/browserstack/test-selection-demo-app-browserstack/tree/add_product_error_msg), or [new_product_bug](https://github.com/browserstack/test-selection-demo-app-browserstack/tree/new_product_bug))  
+
+### Learning Mode  
+In this mode, the agent learns relationships between code changes and tests.
+1. In the test repo, update your `browserstack.yml` with build details:
+    ```yaml
+    projectName: Sample Smart Test Selection Project
+    buildName: Sample Smart Test Selection Learning Build
+    ```
+
+    > **Note:**  
+    > You can also use any other `buildName` that contains only alphabets and underscores. Avoid dynamic names with numbers, dates, or timestamps.  
+    > Ensure that both projectName and buildName remain static and consistent across builds (to ensure that all executions of the same build are grouped together for learning and
+    > prediction)
+
+2. Run the test suite:
+   ```
+   mvn test
+   ```
+   When you execute tests, Smart Test Selection compares your checked-out branch with the base branch (main), analyzes code diffs, and learns which tests are impacted
+
+3. Check results on your [BrowserStack Automate Dashboard](https://automate.browserstack.com/overview?tab=all)  
+   Go to your Build View → Insights tab → Build Optimization widget → View capabilities
+   You should see the Learning Mode indicator enabled for this build  
+
+   ![Learning Mode Screenshot](./smart-selection-learning-mode-on.webp)  
+
+### Prediction Mode
+Once training is complete, the agent begins predicting which tests to run for each change
+1. In the test repo, update your `browserstack.yml` with build details:
+    ```yaml
+    projectName: Sample Smart Test Selection Project
+    buildName: Sample Smart Test Selection Prediction Build
+    ```
+
+    > **Note:**  
+    > Use the provided `buildName` to access a build where agent is already in prediction mode (saves the initial learning time)  
+    > If you use a new buildName, the agent will start in learning Mode and typically needs 12–20 builds to learn before predicting  
+    > Ensure that both projectName and buildName remain static and consistent across builds (to ensure that all executions of the same build are grouped together for learning and                prediction)
+
+2. Run the test suite:
+   ```
+   mvn test
    ```
 
-2. **Install client dependencies:**
-   ```bash
-   cd client && npm install && cd ..
-   ```
+3. Check results on your [BrowserStack Automate Dashboard](https://automate.browserstack.com/overview?tab=all)  
+   Go to your Build View → Insights tab → Build Optimization widget.
+   The Build Optimisation Widget shows the percentage of tests skipped and the total time saved for the build  
 
-3. **Install server dependencies:**
-   ```bash
-   cd server && npm install && cd ..
-   ```
+   ![Prediction Mode Screenshot](./smart-selection-time-savings-details.webp)  
 
-## 🚀 Running the Application
+---
 
-### Development Mode (Recommended)
-```bash
-npm run dev
-```
-This starts both frontend (http://localhost:3000) and backend (http://localhost:5000)
+## Additional Resources
 
-### Individual Components
-- **Backend only:** `npm run server`
-- **Frontend only:** `npm run client`  
-- **Production:** `npm start`
+- [BrowserStack Automate Dashboard](https://automate.browserstack.com/overview?tab=all) - View test execution results
+- [Smart Test Selection Documentation (Java)](https://www.browserstack.com/docs/automate/selenium/smart-test-selection?fw-lang=java) - Learn more about how Smart Test Selection works
+- [BrowserStack Java SDK Docs](https://www.browserstack.com/docs/automate/selenium/sdk-benefits?fw-lang=java%2Ftestng)
 
-## 🔗 Complete API Documentation
-
-### Core Endpoints
-
-| Method | Endpoint | Description | Query Parameters |
-|--------|----------|-------------|------------------|
-| GET    | `/api`   | API information and endpoints | - |
-| GET    | `/api/health` | System health and metrics | - |
-
-### User Management
-
-| Method | Endpoint | Description | Parameters |
-|--------|----------|-------------|------------|
-| GET    | `/api/users` | Get all users | `role`, `limit` |
-| GET    | `/api/users/:id` | Get user by ID | - |
-| POST   | `/api/users` | Create new user | `name`, `email`, `role` |
-| PUT    | `/api/users/:id` | Update user | `name`, `email`, `role` |
-| DELETE | `/api/users/:id` | Delete user | - |
-| GET    | `/api/users/paginated` | Paginated users | `page`, `limit` |
-| POST   | `/api/users/bulk` | Create multiple users | `users[]` |
-
-### Product Management
-
-| Method | Endpoint | Description | Parameters |
-|--------|----------|-------------|------------|
-| GET    | `/api/products` | Get all products | `category`, `minPrice`, `maxPrice`, `sort`, `limit` |
-| GET    | `/api/products/:id` | Get product by ID | - |
-| POST   | `/api/products` | Create new product | `name`, `price`, `category`, `stock`, `description` |
-
-### Task Management
-
-| Method | Endpoint | Description | Parameters |
-|--------|----------|-------------|------------|
-| GET    | `/api/tasks` | Get all tasks | `completed`, `priority`, `assignedTo` |
-| POST   | `/api/tasks` | Create new task | `title`, `priority`, `assignedTo` |
-| PUT    | `/api/tasks/:id` | Update task | `title`, `completed`, `priority`, `assignedTo` |
-
-### Order Management
-
-| Method | Endpoint | Description | Parameters |
-|--------|----------|-------------|------------|
-| GET    | `/api/orders` | Get all orders | `userId`, `status` |
-| POST   | `/api/orders` | Create new order | `userId`, `productId`, `quantity` |
-
-### Analytics & Search
-
-| Method | Endpoint | Description | Parameters |
-|--------|----------|-------------|------------|
-| GET    | `/api/analytics` | Get system analytics | - |
-| GET    | `/api/search` | Search across entities | `q` (query), `type` |
-
-### AI Testing Endpoints
-
-| Method | Endpoint | Description | Parameters |
-|--------|----------|-------------|------------|
-| GET    | `/api/test/slow` | Simulate slow response | `delay` (milliseconds) |
-| GET    | `/api/test/error/:code` | Generate specific error | HTTP status code |
-| GET    | `/api/test/large-data` | Generate large dataset | `count` |
-| POST   | `/api/test/echo` | Echo request data | Any JSON body |
-| GET    | `/api/test/random` | Generate random data | `type` (string, number, boolean, array, object) |
-
-## 📊 Sample API Calls
-
-### Create User
-```bash
-curl -X POST http://localhost:5000/api/users \
-  -H "Content-Type: application/json" \
-  -d '{"name":"John Doe","email":"john@example.com","role":"admin"}'
-```
-
-### Search Products
-```bash
-curl "http://localhost:5000/api/products?category=Electronics&minPrice=100&sort=price_asc"
-```
-
-### Test Error Handling
-```bash
-curl http://localhost:5000/api/test/error/404
-```
-
-### Generate Large Dataset
-```bash
-curl "http://localhost:5000/api/test/large-data?count=5000"
-```
-
-## 🎯 AI Model Testing Scenarios
-
-This application is designed to test various AI model capabilities:
-
-1. **API Integration Testing**: Test API calling and response parsing
-2. **Error Handling**: Verify proper error response processing
-3. **Data Processing**: Handle large datasets and complex JSON structures
-4. **User Interface Interaction**: Test form submissions and UI navigation
-5. **Search and Filtering**: Test query construction and result processing
-6. **CRUD Operations**: Test all database operations
-7. **Performance Testing**: Use slow endpoints and large datasets
-8. **Authentication Flow**: Test with different user roles
-
-## 🔧 Technologies Used
-
-### Frontend
-- React.js 19+ with Hooks
-- Modern CSS with Grid/Flexbox
-- Fetch API for HTTP requests
-- Responsive design principles
-
-### Backend
-- Node.js with Express.js 5+
-- CORS middleware
-- JSON request/response handling
-- In-memory data storage (easily replaceable with database)
-
-### Development Tools
-- nodemon for auto-reload
-- concurrently for running multiple processes
-- VS Code tasks and debugging support
-
-## 📱 Frontend Functionality
-
-### Dashboard Tab
-- Real-time analytics and metrics
-- System health monitoring
-- Overview of all entities
-
-### Users Tab
-- Add, view, and delete users
-- Role-based user management
-- User filtering and search
-
-### Products Tab
-- Product catalog management
-- Category and price filtering
-- Stock level monitoring
-
-### Tasks Tab
-- Task creation and management
-- Priority-based organization
-- User assignment
-- Task completion tracking
-
-### Orders Tab
-- Order creation and tracking
-- User and product selection
-- Order status management
-
-### Search Tab
-- Global search across all entities
-- Real-time search results
-- Category-specific filtering
-
-## 🚀 Advanced Features
-
-### Data Relationships
-- Orders link users and products
-- Tasks can be assigned to users
-- Analytics aggregate data across entities
-
-### Validation & Error Handling
-- Frontend form validation
-- Backend data validation
-- Comprehensive error messages
-- Conflict detection (duplicate emails)
-
-### Performance Features
-- Efficient data filtering
-- Pagination support
-- Optimized search algorithms
-- Memory usage monitoring
-
-## 🔄 Development Workflow
-
-1. Start development servers: `npm run dev`
-2. Frontend auto-reloads on file changes
-3. Backend restarts automatically with nodemon
-4. Use browser dev tools for frontend debugging
-5. Monitor console for API request logs
-
-## 🧪 Testing Guidelines
-
-### Manual Testing
-1. Test all CRUD operations through the UI
-2. Verify error handling with invalid data
-3. Test search functionality across entities
-4. Verify responsive design on different screen sizes
-
-### API Testing
-1. Use curl or Postman for endpoint testing
-2. Test error scenarios with `/api/test/error/:code`
-3. Performance test with `/api/test/large-data`
-4. Validate request/response with `/api/test/echo`
-
-### AI Model Testing
-1. Test API integration capabilities
-2. Verify JSON parsing with complex responses
-3. Test error recovery and handling
-4. Validate search and filter functionality
-
-## 🆘 Troubleshooting
-
-**Common Issues:**
-- **Port conflicts**: Ensure ports 3000 and 5000 are available
-- **CORS errors**: Check proxy configuration in client/package.json
-- **Module errors**: Run `npm install` in both root and client directories
-- **API connection**: Verify backend is running on http://localhost:5000
-
-**Development Tips:**
-- Use browser Network tab to debug API calls
-- Check console logs for detailed error messages
-- Use VS Code debugger for backend debugging
-- Monitor memory usage with `/api/health` endpoint
-
-## 📝 License
-
-ISC License - Feel free to use this project for testing, learning, and development purposes.
+---
