@@ -124,7 +124,7 @@ const Scenarios: React.FC = () => {
                         title: 'Link copied',
                         description: 'The scenario URL is ready to share.',
                         className: toastStyles,
-                        duration: 800
+                        duration: 3000
                       });
                     });
                   }
@@ -160,6 +160,7 @@ const Scenarios: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setToggleState(!toggleState)}
+                  id="feature-toggle-btn"
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                     toggleState ? 'bg-blue-600' : 'bg-gray-200'
                   }`}
@@ -202,6 +203,7 @@ const Scenarios: React.FC = () => {
                 {[25, 50, 75, 100].map((value) => (
                   <button
                     key={value}
+                    id={`progress-btn-${value}`}
                     onClick={() => setProgressValue(value)}
                     className="flex-1 py-2 px-2 text-sm rounded-lg font-medium transition-all bg-gray-100 text-gray-700 hover:bg-gray-200"
                   >
