@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { userProfiles } from '../data/userProfiles';
+import { sanitizeAvatarUrl } from '../lib/avatar';
 
 export interface User {
   id: number;
@@ -19,21 +20,38 @@ interface UserContextType {
   user: User | null;
   login: (userId: string, email: string) => Promise<boolean>;
   logout: () => void;
+  updateUser: (updates: Partial<User>) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
+
+const sanitizeUser = (value: User): User => ({
+  ...value,
+  avatar: sanitizeAvatarUrl(value.avatar),
+});
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
-    if (stored) setUser(JSON.parse(stored));
+    if (!stored) return;
+    try {
+      const parsed = JSON.parse(stored);
+      setUser(sanitizeUser(parsed));
+    } catch {
+      localStorage.removeItem('user');
+    }
   }, []);
 
   useEffect(() => {
-    if (user) localStorage.setItem('user', JSON.stringify(user));
-    else localStorage.removeItem('user');
+    // NOTE: This sandbox only stores mock profiles used for demos; no real PII is persisted.
+    if (user) {
+      const safeUser = sanitizeUser(user);
+      localStorage.setItem('user', JSON.stringify(safeUser));
+    } else {
+      localStorage.removeItem('user');
+    }
   }, [user]);
 
   const login = async (userId: string, email: string) => {
@@ -42,7 +60,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       p => String(p.userId) === String(userId) && p.email === email
     );
     if (profile) {
-      setUser({
+      setUser(sanitizeUser({
         id: profile.userId,
         email: profile.email,
         username: profile.email.split('@')[0],
@@ -54,7 +72,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         gender: 'other',
         company: 'Demo Inc.',
         website: 'https://example.com'
-      });
+      }));
       return true;
     }
     return false;
@@ -62,8 +80,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => setUser(null);
 
+  const updateUser = (updates: Partial<User>) => {
+    setUser(prev => (prev ? sanitizeUser({ ...prev, ...updates }) : prev));
+  };
+
   return (
-    <UserContext.Provider value={{ user, login, logout }}>
+    <UserContext.Provider value={{ user, login, logout, updateUser }}>
       {children}
     </UserContext.Provider>
   );

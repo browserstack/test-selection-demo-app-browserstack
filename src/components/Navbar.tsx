@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useUser } from '../contexts/UserContext';
 import { getAssetPath } from '../lib/assetUtils';
+import { sanitizeAvatarUrl } from '../lib/avatar';
 
 const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -80,7 +81,7 @@ const Navbar: React.FC = () => {
             >
               {user ? (
                 <>
-                  <img src={user.avatar} alt={user.name} className="w-7 h-7 rounded-full border border-gray-300 shrink-0" />
+                  <img src={sanitizeAvatarUrl(user.avatar)} alt={user.name} className="w-7 h-7 rounded-full border border-gray-300 shrink-0" />
                   <span className="hidden md:inline lg:inline xl:inline 2xl:inline text-sm font-medium text-ellipsis overflow-hidden max-w-[80px] lg:max-w-[120px] xl:max-w-[160px] 2xl:max-w-[200px] ipad:hidden">{user.name || user.email}</span>
                 </>
               ) : (

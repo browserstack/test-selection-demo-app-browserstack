@@ -26,16 +26,24 @@ const Checkout: React.FC = () => {
     );
   }
 
+  const buildUserSummary = () => {
+    if (!user) return null;
+    const { id, email, name, username } = user;
+    return { id, email, name, username };
+  };
+
   const handlePlaceOrder = () => {
     const order = {
       id: Date.now().toString(),
       date: new Date().toLocaleString(),
       items: cart.items,
       total: cart.items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-      user,
+      user: buildUserSummary(),
     };
     // Use user id if available, else fallback to email
-    const userKey = user.id ? `order-history-${user.id}` : `order-history-${user.email}`;
+    const userKey = user?.id
+      ? `order-history-${user.id}`
+      : `order-history-${user?.email ?? 'guest'}`;
     const prev = localStorage.getItem(userKey);
     const orders = prev ? JSON.parse(prev) : [];
     orders.push(order);

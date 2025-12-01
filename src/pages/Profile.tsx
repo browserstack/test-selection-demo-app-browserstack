@@ -1,12 +1,12 @@
-import React, { useImperativeHandle, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useUser } from '../contexts/UserContext';
-import { useNavigate } from 'react-router-dom';
 import EmptyState from '../components/ui/EmptyState';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
+import { sanitizeAvatarUrl } from '../lib/avatar';
 
 const Profile: React.FC = () => {
-  const { user, login, logout } = useUser();
+  const { user, login, logout, updateUser } = useUser();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -19,7 +19,6 @@ const Profile: React.FC = () => {
     company: user?.company || '',
     website: user?.website || ''
   });
-  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,11 +34,21 @@ const Profile: React.FC = () => {
   };
 
   const handleSave = () => {
-    // Update user context and localStorage
-    Object.assign(user!, form);
-    localStorage.setItem('user', JSON.stringify(user));
+    if (!user) return;
+    updateUser(form);
     setEditMode(false);
   };
+
+  useEffect(() => {
+    setForm({
+      phone: user?.phone || '',
+      address: user?.address || '',
+      birthdate: user?.birthdate || '',
+      gender: user?.gender || '',
+      company: user?.company || '',
+      website: user?.website || ''
+    });
+  }, [user]);
 
   if (!user) {
     return (
@@ -70,7 +79,7 @@ const Profile: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center py-8">
       <div className="bg-white rounded-lg shadow p-8 flex flex-col items-center">
-        <img src={user.avatar} alt={user.name} className="w-24 h-24 rounded-full mb-4" />
+        <img src={sanitizeAvatarUrl(user.avatar)} alt={user.name} className="w-24 h-24 rounded-full mb-4" />
         <h2 className="text-xl font-bold mb-2">{user.name}</h2>
         <div className="text-gray-600 mb-2">{user.email}</div>
         <div className="text-gray-600 mb-2">@{user.username}</div>
