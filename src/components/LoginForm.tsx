@@ -12,6 +12,7 @@ const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { login } = useUser();
   const navigate = useNavigate();
 
@@ -23,15 +24,16 @@ const LoginForm: React.FC = () => {
     const matchedUser = userProfiles.find(u => u.email === email && u.password === password);
     if (!matchedUser) {
       setIsLoading(false);
-      alert('Login failed. Please check your credentials.');
+      setErrorMessage('Login failed. Please check your credentials.');
       return;
     }
     const success = await login(matchedUser.userId.toString(), email);
     setIsLoading(false);
     if (success) {
+      setErrorMessage(null);
       navigate('/products');
     } else {
-      alert('Login failed. Please check your credentials.');
+      setErrorMessage('Login failed. Please check your credentials.');
     }
   };
 
@@ -51,6 +53,14 @@ const LoginForm: React.FC = () => {
 
           {/* Quick user selector keeps demo credentials handy */}
           <form onSubmit={handleSubmit} className="space-y-6">
+                {errorMessage && (
+                  <div
+                    id="login-error"
+                    className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700"
+                  >
+                    {errorMessage}
+                  </div>
+                )}
                 <div>
                   <label className="block text-sm font-medium mb-2 text-gray-700">Quick Select User</label>
                   <select
