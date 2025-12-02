@@ -8,7 +8,57 @@ import { Toaster } from '../components/ui/toaster';
 const Scenarios: React.FC = () => {
   const [toggleState, setToggleState] = useState(false);
   const [progressValue, setProgressValue] = useState(45);
+  const [lastCopiedLink, setLastCopiedLink] = useState('');
   const toastStyles = 'border-2 shadow-lg rounded-lg px-4 py-3 font-semibold transition-all duration-200 bg-blue-100 border-blue-300 text-blue-800';
+
+  const showCopyToast = (description: string) =>
+    toast({
+      title: 'Link copied',
+      description,
+      className: toastStyles,
+      duration: 800
+    });
+
+  const fallbackCopyToClipboard = (value: string) => {
+    const textarea = document.createElement('textarea');
+    textarea.value = value;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'absolute';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand('copy');
+    } catch (error) {
+      console.warn('Clipboard fallback failed', error);
+    }
+    document.body.removeChild(textarea);
+  };
+
+  const handleCopyShareLink = () => {
+    const text = document.getElementById('share-link')?.textContent?.trim();
+    if (!text) {
+      return;
+    }
+
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          setLastCopiedLink(text);
+          showCopyToast('The scenario URL is ready to share.');
+        })
+        .catch(() => {
+          fallbackCopyToClipboard(text);
+          setLastCopiedLink(text);
+          showCopyToast('Copied using fallback clipboard support.');
+        });
+    } else {
+      fallbackCopyToClipboard(text);
+      setLastCopiedLink(text);
+      showCopyToast('Copied using fallback clipboard support.');
+    }
+  };
 
   return (
     <div className="min-h-screen py-8">
@@ -21,18 +71,18 @@ const Scenarios: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid gap-8 md:grid-cols-1 lg:grid-cols-2">
           <Card className="bg-white p-8 rounded-xl shadow-lg">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-blue-100 text-blue-600 rounded-lg">
                 <CheckCircle className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-bold">Form Field Target</h3>
-                <p className="text-gray-600">Demonstrate how your flows handle predictable customer reference fields.</p>
+                <h3 className="text-xl font-bold">Static ID Field</h3>
+                <p className="text-gray-600">Demonstrate how your scripts store and reuse customer references.</p>
               </div>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-4">
               <label htmlFor="static-id-field" className="text-sm font-medium text-gray-600">Customer reference</label>
               <input
                 type="text"
@@ -92,7 +142,7 @@ const Scenarios: React.FC = () => {
                   title: 'Demo notification',
                   description: 'Content Description button clicked!',
                   className: toastStyles,
-                  duration: 500
+                  duration: 5000
                 })}
               >
                 Submit
@@ -116,22 +166,20 @@ const Scenarios: React.FC = () => {
               </div>
               <button
                 className="w-full py-3 px-4 rounded-lg font-medium transition-all bg-blue-600 hover:bg-blue-700 text-white"
-                onClick={() => {
-                  const text = document.getElementById('share-link')?.textContent?.trim();
-                  if (text) {
-                    navigator.clipboard.writeText(text).then(() => {
-                      toast({
-                        title: 'Link copied',
-                        description: 'The scenario URL is ready to share.',
-                        className: toastStyles,
-                        duration: 3000
-                      });
-                    });
-                  }
-                }}
+                onClick={handleCopyShareLink}
               >
                 Copy share link
               </button>
+              {lastCopiedLink && (
+                <div
+                  id="share-copy-result"
+                  className="mt-3 rounded-lg border border-blue-100 bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700"
+                  aria-live="polite"
+                  data-automation="copy-result"
+                >
+                  Last copied: <span className="font-mono">{lastCopiedLink}</span>
+                </div>
+              )}
             </div>
           </Card>
 
