@@ -91,7 +91,7 @@ const ShoppingCartPage = () => {
                   <div className="text-blue-600 font-bold text-lg">${item.price} x {item.quantity}</div>
                   <div className="flex items-center gap-2 mt-2">
                     <button className="px-2 py-1 bg-gray-200 rounded" onClick={() => decrementFromCart(item.id)}>-</button>
-                    <span className="px-2">{item.quantity}</span>
+                    <span className="px-2" id="item-quantity">{item.quantity}</span>
                     <button className="px-2 py-1 bg-gray-200 rounded" onClick={() => addToCart(item, 1)}>+</button>
                   </div>
                 </div>
