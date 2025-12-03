@@ -36,6 +36,8 @@ jobs:
 
       - name: Install dependencies
         run: |
+          # Ensure required native deps for image optimization binaries (pngquant) are present
+          sudo apt-get update && sudo apt-get install -y libpng-dev build-essential pkg-config || true
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
       - name: Determine deploy subpath
@@ -103,6 +105,8 @@ jobs:
 
       - name: Install dependencies
         run: |
+          # Ensure required native deps for image optimization binaries (pngquant) are present
+          sudo apt-get update && sudo apt-get install -y libpng-dev build-essential pkg-config || true
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
       - name: Determine deploy subpath
