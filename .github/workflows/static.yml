@@ -81,7 +81,7 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./build
+          path: ./dist
 
       - name: Deploy to GitHub Pages
         id: deployment
@@ -150,7 +150,7 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./build
+          path: ./dist
 
       - name: Deploy to GitHub Pages
         id: deployment
