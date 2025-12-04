@@ -61,8 +61,8 @@ jobs:
           BASE_PATH: ${{ steps.vars.outputs.subpath }}
         run: |
           # Compute a single deploy base that always ends with a trailing slash
-          # Use package name from package.json as base so built assets match paths
-          REPO_NAME=$(node -e "console.log(require('./package.json').name)")
+          # Use repository name as base (strip organization) so site is published under the repo path
+          REPO_NAME=${GITHUB_REPOSITORY#*/}
           if [ -n "$BASE_PATH" ]; then
             DEPLOY_BASE="/${REPO_NAME}/${BASE_PATH}/"
           else
@@ -133,8 +133,8 @@ jobs:
           BASE_PATH: ${{ steps.vars.outputs.subpath }}
         run: |
           # Compute a single deploy base that always ends with a trailing slash
-          # Use package name from package.json as base so built assets match paths
-          REPO_NAME=$(node -e "console.log(require('./package.json').name)")
+          # Use repository name as base (strip organization) so site is published under the repo path
+          REPO_NAME=${GITHUB_REPOSITORY#*/}
           if [ -n "$BASE_PATH" ]; then
             DEPLOY_BASE="/${REPO_NAME}/${BASE_PATH}/"
           else
