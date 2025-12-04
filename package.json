@@ -1,8 +1,8 @@
 {
-  "name": "browserstack-demo-app",
+  "name": "test-selection-demo-app-browserstack",
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://browserstack.github.io/browserstack-demo-app",
+  "homepage": "https://browserstack.github.io/test-selection-demo-app-browserstack",
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
