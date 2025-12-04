@@ -3,24 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Loading...</title>
+    <title>Redirecting...</title>
     <script>
-      // Surge serves 404.html for unknown routes unless a 200 fallback is provided.
-      // Instead of mutating the URL (which produced /?/… redirects), load the main
-      // SPA shell in-place so React Router can hydrate the correct route.
-      fetch('/index.html', { credentials: 'same-origin' })
-        .then((response) => response.text())
-        .then((html) => {
-          document.open();
-          document.write(html);
-          document.close();
-        })
-        .catch(() => {
-          window.location.replace('/');
-        });
+      // Single Page Application redirect for GitHub Pages
+      // This redirects all routes to index.html so React Router can handle them
+      const pathSegmentsToKeep = 1; // selfheal-demo-app
+      const l = window.location;
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') +
+        '/?/' + l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash
+      );
     </script>
   </head>
   <body>
-    <p>Loading the application…</p>
+    <p>Redirecting to the app...</p>
   </body>
 </html>
