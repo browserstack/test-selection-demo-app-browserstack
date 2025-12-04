@@ -38,6 +38,8 @@ jobs:
         run: |
           # Ensure required native deps for image optimization binaries (pngquant) are present
           sudo apt-get update && sudo apt-get install -y libpng-dev build-essential pkg-config || true
+          # Avoid installing optional native binaries that sometimes fail in CI
+          export npm_config_optional=false
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
       - name: Determine deploy subpath
@@ -73,6 +75,15 @@ jobs:
           export PUBLIC_URL="$DEPLOY_BASE"
           export VITE_BASE_PATH="$DEPLOY_BASE"
           echo "Building with DEPLOY_BASE=$DEPLOY_BASE"
+          
+          # Print the expected GitHub Pages URL to make verification easier
+          OWNER=${GITHUB_REPOSITORY%%/*}
+          REPO=${GITHUB_REPOSITORY#*/}
+          # strip possible .git (unlikely in GITHUB_REPOSITORY but safe)
+          REPO=$(basename -s .git "$REPO")
+          # Construct URL without trailing slash
+          EXPECTED_URL="https://${OWNER}.github.io/${REPO}${DEPLOY_BASE%/}"
+          echo "Expected Pages URL: $EXPECTED_URL"
 
           npm run build
           # Ensure SPA routes work on GitHub Pages by providing a 404 fallback
@@ -110,6 +121,8 @@ jobs:
         run: |
           # Ensure required native deps for image optimization binaries (pngquant) are present
           sudo apt-get update && sudo apt-get install -y libpng-dev build-essential pkg-config || true
+          # Avoid installing optional native binaries that sometimes fail in CI
+          export npm_config_optional=false
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
       - name: Determine deploy subpath
@@ -145,6 +158,12 @@ jobs:
           export PUBLIC_URL="$DEPLOY_BASE"
           export VITE_BASE_PATH="$DEPLOY_BASE"
           echo "Building with DEPLOY_BASE=$DEPLOY_BASE"
+          # Print the expected GitHub Pages URL to make verification easier
+          OWNER=${GITHUB_REPOSITORY%%/*}
+          REPO=${GITHUB_REPOSITORY#*/}
+          REPO=$(basename -s .git "$REPO")
+          EXPECTED_URL="https://${OWNER}.github.io/${REPO}${DEPLOY_BASE%/}"
+          echo "Expected Pages URL: $EXPECTED_URL"
 
           npm run build
           # Ensure SPA routes work on GitHub Pages by providing a 404 fallback
