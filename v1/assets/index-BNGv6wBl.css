@@ -1,4 +1,0 @@
-/* shim: forward old v1 CSS to the built CSS by performing a client redirect to the correct path */
-@import url('/test-selection-demo-app-browserstack/assets/index-BNGv6wBl.css');
-/* fallback: minimal styles to reduce FOUC if import fails */
-html,body{height:100%;margin:0}
