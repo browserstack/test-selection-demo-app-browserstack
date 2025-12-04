@@ -59,13 +59,14 @@ jobs:
       - name: Build
         env:
           BASE_PATH: ${{ steps.vars.outputs.subpath }}
-          APP_BASE: browserstack-demo-app
         run: |
           # Compute a single deploy base that always ends with a trailing slash
+          # Use repository name as base (strip organization and .git if present)
+          REPO_NAME=$(basename -s .git "${GITHUB_REPOSITORY}")
           if [ -n "$BASE_PATH" ]; then
-            DEPLOY_BASE="/${APP_BASE}/${BASE_PATH}/"
+            DEPLOY_BASE="/${REPO_NAME}/${BASE_PATH}/"
           else
-            DEPLOY_BASE="/${APP_BASE}/"
+            DEPLOY_BASE="/${REPO_NAME}/"
           fi
 
           # Export to the build-tool env names expected by the project
@@ -128,13 +129,14 @@ jobs:
       - name: Build
         env:
           BASE_PATH: ${{ steps.vars.outputs.subpath }}
-          APP_BASE: browserstack-demo-app
         run: |
           # Compute a single deploy base that always ends with a trailing slash
+          # Use repository name as base (strip organization and .git if present)
+          REPO_NAME=$(basename -s .git "${GITHUB_REPOSITORY}")
           if [ -n "$BASE_PATH" ]; then
-            DEPLOY_BASE="/${APP_BASE}/${BASE_PATH}/"
+            DEPLOY_BASE="/${REPO_NAME}/${BASE_PATH}/"
           else
-            DEPLOY_BASE="/${APP_BASE}/"
+            DEPLOY_BASE="/${REPO_NAME}/"
           fi
 
           # Export to the build-tool env names expected by the project
