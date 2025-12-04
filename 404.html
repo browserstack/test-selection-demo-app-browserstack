@@ -5,17 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Redirecting...</title>
     <script>
-      // Single Page Application redirect for GitHub Pages
-      // This redirects all routes to index.html so React Router can handle them
-      const pathSegmentsToKeep = 1; // selfheal-demo-app
-      const l = window.location;
-      l.replace(
-        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') +
-        '/?/' + l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
-        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-        l.hash
-      );
+      // SPA redirect for GitHub Pages: move path into query so index.html can restore it
+      (function () {
+        var l = window.location;
+        // derive base path like /owner/repo or /repo depending on hosting
+        var parts = l.pathname.split('/').filter(Boolean);
+        // assume repo is the first path segment when hosted on browserstack.github.io
+        var repoIndex = parts.indexOf('test-selection-demo-app-browserstack');
+        var base = '/test-selection-demo-app-browserstack/';
+        // If repo not found, fall back to root
+        if (repoIndex === -1) {
+          base = '/';
+        }
+        var newPath = base + '?/' + l.pathname.slice(base.length).replace(/&/g, '~and~') + (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') + l.hash;
+        l.replace(l.protocol + '//' + l.host + newPath);
+      })();
     </script>
   </head>
   <body>
