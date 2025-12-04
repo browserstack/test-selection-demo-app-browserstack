@@ -61,8 +61,8 @@ jobs:
           BASE_PATH: ${{ steps.vars.outputs.subpath }}
         run: |
           # Compute a single deploy base that always ends with a trailing slash
-          # Use repository name as base (strip organization and .git if present)
-          REPO_NAME=$(basename -s .git "${GITHUB_REPOSITORY}")
+          # Use package name from package.json as base so built assets match paths
+          REPO_NAME=$(node -e "console.log(require('./package.json').name)")
           if [ -n "$BASE_PATH" ]; then
             DEPLOY_BASE="/${REPO_NAME}/${BASE_PATH}/"
           else
@@ -75,6 +75,8 @@ jobs:
           echo "Building with DEPLOY_BASE=$DEPLOY_BASE"
 
           npm run build
+          # Ensure SPA routes work on GitHub Pages by providing a 404 fallback
+          if [ -f dist/index.html ]; then cp dist/index.html dist/404.html || true; fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -131,8 +133,8 @@ jobs:
           BASE_PATH: ${{ steps.vars.outputs.subpath }}
         run: |
           # Compute a single deploy base that always ends with a trailing slash
-          # Use repository name as base (strip organization and .git if present)
-          REPO_NAME=$(basename -s .git "${GITHUB_REPOSITORY}")
+          # Use package name from package.json as base so built assets match paths
+          REPO_NAME=$(node -e "console.log(require('./package.json').name)")
           if [ -n "$BASE_PATH" ]; then
             DEPLOY_BASE="/${REPO_NAME}/${BASE_PATH}/"
           else
@@ -145,6 +147,8 @@ jobs:
           echo "Building with DEPLOY_BASE=$DEPLOY_BASE"
 
           npm run build
+          # Ensure SPA routes work on GitHub Pages by providing a 404 fallback
+          if [ -f dist/index.html ]; then cp dist/index.html dist/404.html || true; fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
