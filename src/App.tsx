@@ -120,7 +120,7 @@ const App = () => (
     <CartProvider>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <BrowserRouter>
+          <BrowserRouter basename={import.meta.env.BASE_URL}>
             <AppContent />
           </BrowserRouter>
         </TooltipProvider>
