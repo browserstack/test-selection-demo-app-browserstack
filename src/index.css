@@ -97,26 +97,6 @@ All colors MUST be HSL.
   }
 }
 
-/* Self-healing mode styles */
-.healing-highlight {
-  @apply ring-2 ring-orange-300 ring-opacity-50 animate-pulse;
-}
-
-.healing-glow {
-  box-shadow: 0 0 20px rgba(251, 146, 60, 0.3);
-}
-
-/* Smooth transitions for healing mode */
-.healing-transition {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@media (max-width: 1075px) {
-  .healing-demo-desktop {
-    display: none !important;
-  }
-}
-
 /* Hide username on iPad screen sizes */
 @media (min-width: 768px) and (max-width: 1080px) and (orientation: portrait),
        (min-width: 768px) and (max-width: 1080px) and (orientation: landscape) {
