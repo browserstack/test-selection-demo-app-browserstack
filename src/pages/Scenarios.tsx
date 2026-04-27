@@ -83,10 +83,10 @@ const Scenarios: React.FC = () => {
               </div>
             </div>
             <div className="space-y-4">
-              <label htmlFor="static-id-field" className="text-sm font-medium text-gray-600">Customer reference</label>
+              <label htmlFor="fixed-id-field" className="text-sm font-medium text-gray-600">Customer reference</label>
               <input
                 type="text"
-                id="static-id-field"
+                id="fixed-id-field"
                 className="w-full px-4 py-3 border rounded-lg focus:ring-2 transition-all border-gray-300 focus:ring-blue-500"
                 placeholder="e.g. ORD-2025-001"
               />
@@ -139,7 +139,7 @@ const Scenarios: React.FC = () => {
                 title="Submit"
                 className="w-full py-3 px-4 rounded-lg font-medium transition-all bg-blue-600 hover:bg-blue-700 text-white"
                 onClick={() => toast({
-                  title: 'Demo notification',
+                  title: 'Toast Notification',
                   description: 'Content Description button clicked!',
                   className: toastStyles,
                   duration: 5000
@@ -162,7 +162,7 @@ const Scenarios: React.FC = () => {
             </div>
             <div className="space-y-4">
               <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 font-mono text-sm text-gray-700" id="share-link">
-                https://demo-app.local/scenario
+                https://abc.com
               </div>
               <button
                 className="w-full py-3 px-4 rounded-lg font-medium transition-all bg-blue-600 hover:bg-blue-700 text-white"
