@@ -21,11 +21,9 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  # Deploy for non-main branches (no protected environment)
+  deploy_unprotected:
+    if: github.ref != 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -38,6 +36,10 @@ jobs:
 
       - name: Install dependencies
         run: |
+          # Ensure required native deps for image optimization binaries (pngquant) are present
+          sudo apt-get update && sudo apt-get install -y libpng-dev build-essential pkg-config || true
+          # Avoid installing optional native binaries that sometimes fail in CI
+          export npm_config_optional=false
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
       - name: Determine deploy subpath
@@ -59,21 +61,33 @@ jobs:
       - name: Build
         env:
           BASE_PATH: ${{ steps.vars.outputs.subpath }}
-          APP_BASE: browserstack-demo-app
         run: |
           # Compute a single deploy base that always ends with a trailing slash
+          # Use repository name as base (strip organization) so site is published under the repo path
+          REPO_NAME=${GITHUB_REPOSITORY#*/}
           if [ -n "$BASE_PATH" ]; then
-            DEPLOY_BASE="/${APP_BASE}/${BASE_PATH}/"
+            DEPLOY_BASE="/${REPO_NAME}/${BASE_PATH}/"
           else
-            DEPLOY_BASE="/${APP_BASE}/"
+            DEPLOY_BASE="/${REPO_NAME}/"
           fi
 
           # Export to the build-tool env names expected by the project
           export PUBLIC_URL="$DEPLOY_BASE"
           export VITE_BASE_PATH="$DEPLOY_BASE"
           echo "Building with DEPLOY_BASE=$DEPLOY_BASE"
+          
+          # Print the expected GitHub Pages URL to make verification easier
+          OWNER=${GITHUB_REPOSITORY%%/*}
+          REPO=${GITHUB_REPOSITORY#*/}
+          # strip possible .git (unlikely in GITHUB_REPOSITORY but safe)
+          REPO=$(basename -s .git "$REPO")
+          # Construct URL without trailing slash
+          EXPECTED_URL="https://${OWNER}.github.io/${REPO}${DEPLOY_BASE%/}"
+          echo "Expected Pages URL: $EXPECTED_URL"
 
           npm run build
+          # Ensure SPA routes work on GitHub Pages by providing a 404 fallback
+          if [ -f dist/index.html ]; then cp dist/index.html dist/404.html || true; fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -81,7 +95,87 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./build
+          path: ./dist
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # Deploy for main branch (keeps environment protections)
+  deploy_protected:
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          # Ensure required native deps for image optimization binaries (pngquant) are present
+          sudo apt-get update && sudo apt-get install -y libpng-dev build-essential pkg-config || true
+          # Avoid installing optional native binaries that sometimes fail in CI
+          export npm_config_optional=false
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+      - name: Determine deploy subpath
+        id: vars
+        run: |
+          BRANCH=${GITHUB_REF#refs/heads/}
+          # Default folder for main is root (no vX prefix). For demo branches map to v1..v5
+          case "$BRANCH" in
+            demo_app_v1) SUBPATH="v1";;
+            demo_app_v2) SUBPATH="v2";;
+            demo_app_v3) SUBPATH="v3";;
+            demo_app_v4) SUBPATH="v4";;
+            demo_app_v5) SUBPATH="v5";;
+            main) SUBPATH="";;
+            *) SUBPATH="";;
+          esac
+          echo "subpath=$SUBPATH" >> $GITHUB_OUTPUT
+
+      - name: Build
+        env:
+          BASE_PATH: ${{ steps.vars.outputs.subpath }}
+        run: |
+          # Compute a single deploy base that always ends with a trailing slash
+          # Use repository name as base (strip organization) so site is published under the repo path
+          REPO_NAME=${GITHUB_REPOSITORY#*/}
+          if [ -n "$BASE_PATH" ]; then
+            DEPLOY_BASE="/${REPO_NAME}/${BASE_PATH}/"
+          else
+            DEPLOY_BASE="/${REPO_NAME}/"
+          fi
+
+          # Export to the build-tool env names expected by the project
+          export PUBLIC_URL="$DEPLOY_BASE"
+          export VITE_BASE_PATH="$DEPLOY_BASE"
+          echo "Building with DEPLOY_BASE=$DEPLOY_BASE"
+          # Print the expected GitHub Pages URL to make verification easier
+          OWNER=${GITHUB_REPOSITORY%%/*}
+          REPO=${GITHUB_REPOSITORY#*/}
+          REPO=$(basename -s .git "$REPO")
+          EXPECTED_URL="https://${OWNER}.github.io/${REPO}${DEPLOY_BASE%/}"
+          echo "Expected Pages URL: $EXPECTED_URL"
+
+          npm run build
+          # Ensure SPA routes work on GitHub Pages by providing a 404 fallback
+          if [ -f dist/index.html ]; then cp dist/index.html dist/404.html || true; fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload build artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
 
       - name: Deploy to GitHub Pages
         id: deployment
