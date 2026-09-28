@@ -91,15 +91,5 @@ export const products = [
     description: 'Samsung Galaxy S20+ with Snapdragon 865, 6.7-inch Dynamic AMOLED, quad camera system.',
     image: getAssetPath('/static/products/samsung-S20+.png'),
     rating: { rate: 4.7, count: 160 }
-  },
-  {
-    id: 10,
-    title: 'Samsung Galaxy S20 Ultra',
-    price: 999.99,
-    category: 'android',
-    os: 'android',
-    description: 'Samsung Galaxy S20 Ultra with Snapdragon 865, 6.9-inch Dynamic AMOLED, 108MP camera.',
-    image: getAssetPath('/static/products/samsung-S20Ultra.png'),
-    rating: { rate: 4.8, count: 175 }
   }
 ];
