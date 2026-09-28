@@ -102,7 +102,7 @@ const ShoppingCartPage = () => {
           <button id="clear-cart-btn" className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" onClick={clearCart}>Clear Cart</button>
           {user ? (
             <>
-              <Link to="/checkout" id="checkout-btn" className="mt-6 px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700 w-full text-lg font-bold text-center block">Checkout</Link>
+              <Link to="/checkout" id="place-order-btn" className="mt-6 px-6 py-3 bg-green-600 text-white rounded hover:bg-green-700 w-full text-lg font-bold text-center block">Checkout</Link>
             </>
           ) : (
             <div className="mt-6 px-6 py-3 bg-yellow-100 text-yellow-800 rounded w-full text-center text-lg font-semibold">
