@@ -3,24 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Loading...</title>
+    <title>Redirecting...</title>
     <script>
-      // Surge serves 404.html for unknown routes unless a 200 fallback is provided.
-      // Instead of mutating the URL (which produced /?/… redirects), load the main
-      // SPA shell in-place so React Router can hydrate the correct route.
-      fetch('/index.html', { credentials: 'same-origin' })
-        .then((response) => response.text())
-        .then((html) => {
-          document.open();
-          document.write(html);
-          document.close();
-        })
-        .catch(() => {
-          window.location.replace('/');
-        });
+      // SPA redirect for GitHub Pages: move path into query so index.html can restore it
+      (function () {
+        var l = window.location;
+        // derive base path like /owner/repo or /repo depending on hosting
+        var parts = l.pathname.split('/').filter(Boolean);
+        // assume repo is the first path segment when hosted on browserstack.github.io
+        var repoIndex = parts.indexOf('test-selection-demo-app-browserstack');
+        var base = '/test-selection-demo-app-browserstack/';
+        // If repo not found, fall back to root
+        if (repoIndex === -1) {
+          base = '/';
+        }
+        var newPath = base + '?/' + l.pathname.slice(base.length).replace(/&/g, '~and~') + (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') + l.hash;
+        l.replace(l.protocol + '//' + l.host + newPath);
+      })();
     </script>
   </head>
   <body>
-    <p>Loading the application…</p>
+    <p>Redirecting to the app...</p>
   </body>
 </html>

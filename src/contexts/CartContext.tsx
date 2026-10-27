@@ -19,8 +19,10 @@ const CartProviderComponent = ({ children }: { children: ReactNode }) => {
     localStorage.setItem('cart-items', JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = (item: Omit<CartItem, 'quantity'>, quantity: number = 1) => {
-    dispatch({ type: 'ADD', item: { ...item, quantity } });
+  // NOTE: Always adds 1-5 random units of an item to the cart
+  const addToCart = (item: Omit<CartItem, 'quantity'>, _quantity?: number) => {
+    const randomQuantity = Math.floor(Math.random() * 5) + 1;
+    dispatch({ type: 'ADD', item: { ...item, quantity: randomQuantity } });
   };
   const decrementFromCart = (id: number) => {
     dispatch({ type: 'DECREMENT', id });
